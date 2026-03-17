@@ -1,65 +1,40 @@
-<script>
-const inputBox = document.getElementById("inputBox");
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>World Bridge Merlin</title>
 
-const successSound = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-const failSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
-
-let levels = [
-    {
-        era: "Ancient",
-        words: ["fire", "smoke", "magic"],
-        hint: "🔥 Gândește evoluția..."
-    },
-    {
-        era: "Medieval",
-        words: ["magic", "alchemy", "machine"],
-        hint: "⚔️ Din magie spre știință..."
-    },
-    {
-        era: "Modern",
-        words: ["machine", "computer", "ai"],
-        hint: "💻 Te apropii de viitor..."
-    }
-];
-
-let currentLevel = 0;
-let step = 0;
-
-function updateUI(){
-    document.getElementById("era").innerText = "Era: " + levels[currentLevel].era;
-    document.getElementById("merlin").innerText = "🧙 Merlin: " + levels[currentLevel].hint;
-    document.getElementById("path").innerText = "Progress: " + levels[currentLevel].words.slice(0, step).join(" ➝ ");
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-updateUI();
+.game {
+    background: rgba(255,255,255,0.05);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    width: 350px;
+    transition: 0.3s;
+}
 
-inputBox.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        let value = inputBox.value.toLowerCase();
-        let correctWord = levels[currentLevel].words[step];
+.game:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(0,255,255,0.6);
+}
 
-        if(value === correctWord){
-            successSound.play();
-            step++;
+.correct { animation: glow 0.5s; }
+.wrong { animation: shake 0.3s; }
 
-            if(step >= levels[currentLevel].words.length){
-                currentLevel++;
-                step = 0;
-
-                if(currentLevel >= levels.length){
-                    document.getElementById("merlin").innerText = "🌌 Ai ajuns în viitor! AI a fost creat!";
-                    inputBox.disabled = true;
-                    return;
-                }
-            }
-
-        } else {
-            failSound.play();
-            document.getElementById("merlin").innerText = "❌ Greșit... " + levels[currentLevel].hint;
-        }
-
-        updateUI();
-        inputBox.value = "";
-    }
-});
-</script>
+@keyframes glow {
+    from { box-shadow: 0 0 0px green; }
+    to { box-shadow: 0 0 20px green; }
+}
