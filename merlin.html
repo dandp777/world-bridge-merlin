@@ -4,16 +4,54 @@
 <meta charset="UTF-8">
 <title>World Bridge Merlin</title>
 <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+
 <style>
-body {margin:0;background:black;}
-#inputBox {position:absolute;bottom:20px;left:20px;padding:10px;}
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  font-family: Arial;
+  color: white;
+}
+
+#inputBox {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  width: 300px;
+  outline: none;
+}
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(30,41,59,0.8);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
 </style>
 </head>
+
 <body>
 
-<input id="inputBox" placeholder="Cuvânt..." />
+<div class="card">
+  <h2 id="era"></h2>
+  <p id="merlin"></p>
+  <h1 id="path"></h1>
+</div>
+
+<input id="inputBox" placeholder="Scrie cuvânt..." />
 
 <script>
+
 let levels = [
 {era:"Ancient",start:"fire",goal:"magic",path:["smoke","ritual"]},
 {era:"Medieval",start:"magic",goal:"machine",path:["alchemy","science"]},
@@ -21,44 +59,85 @@ let levels = [
 ];
 
 let currentLevel = 0;
+let mistakes = 0;
 
-class GameScene extends Phaser.Scene{
-create(){
-this.level = levels[currentLevel];
-
-this.add.text(20,20,"Era: "+this.level.era,{fontSize:"24px",fill:"#fff"});
-this.merlin = this.add.text(20,60,"🧙 Merlin: Think evolution",{fontSize:"18px",fill:"#a78bfa"});
-this.pathText = this.add.text(20,120,this.level.start,{fontSize:"28px",fill:"#fff"});
-
-this.currentPath=[this.level.start];
-
-let input=document.getElementById("inputBox");
-input.onkeydown=(e)=>{
-if(e.key==="Enter"){
-this.check(input.value.toLowerCase());
-input.value="";
-}
-};
+function getMerlinHint() {
+  let hints = [
+    "Gândește evoluția...",
+    "Ce vine după asta?",
+    "Folosește logică...",
+    "Privește în viitor..."
+  ];
+  return hints[Math.floor(Math.random() * hints.length)];
 }
 
-check(word){
-let expected=this.level.path[this.currentPath.length-1];
+let level = levels[currentLevel];
+let path = [level.start];
 
-if(word===expected){
-this.currentPath.push(word);
-this.pathText.setText(this.currentPath.join(" → "));
-if(this.currentPath.length-1===this.level.path.length){
-alert("Level complete!");
-currentLevel++;
-location.reload();
-}
-}else{
-this.merlin.setText("🧙 Wrong path...");
-}
-}
+const eraText = document.getElementById("era");
+const merlinText = document.getElementById("merlin");
+const pathText = document.getElementById("path");
+const input = document.getElementById("inputBox");
+
+function updateUI() {
+  eraText.innerText = "Era: " + level.era;
+  pathText.innerText = path.join(" → ");
 }
 
-new Phaser.Game({type:Phaser.AUTO,width:800,height:600,scene:[GameScene]});
+updateUI();
+merlinText.innerText = "🧙 Merlin: " + getMerlinHint();
+
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    check(input.value.toLowerCase());
+    input.value = "";
+  }
+});
+
+function check(word) {
+  let expected = level.path[path.length - 1];
+
+  if (word === expected) {
+    path.push(word);
+    mistakes = 0;
+    updateUI();
+
+    if (path.length - 1 === level.path.length) {
+      win();
+    }
+
+  } else if (word === level.goal.toLowerCase() &&
+             path.length - 1 === level.path.length) {
+
+    path.push(word);
+    win();
+
+  } else {
+    mistakes++;
+    merlinText.innerText = "❌ Merlin: Nu... încearcă altceva.";
+
+    if (mistakes >= 2) {
+      merlinText.innerText = "💡 Merlin: Hint → " + expected;
+    }
+  }
+}
+
+function win() {
+  merlinText.innerText = "✨ Merlin: Ai reușit!";
+  setTimeout(() => {
+    currentLevel++;
+    if (currentLevel >= levels.length) {
+      alert("🎉 Ai terminat jocul!");
+      location.reload();
+    } else {
+      level = levels[currentLevel];
+      path = [level.start];
+      updateUI();
+      merlinText.innerText = "🧙 Merlin: Nivel nou!";
+    }
+  }, 1000);
+}
+
 </script>
 
 </body>
