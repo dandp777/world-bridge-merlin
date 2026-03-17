@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
+<!-- IMPORTANT PENTRU TELEFON -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Game Hub PRO</title>
 
 <style>
@@ -13,36 +17,51 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  padding: 10px;
 }
 
+/* screens */
 .screen { display: none; }
 .active { display: block; }
 
+/* card */
 .card {
   background: rgba(255,255,255,0.05);
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
   text-align: center;
   backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 400px;
   transition: 0.3s;
 }
 
-button {
-  padding: 10px 20px;
+/* text */
+h1 { font-size: 22px; }
+h2 { font-size: 20px; }
+p { font-size: 16px; }
+
+/* input + buttons */
+input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 12px;
   border: none;
-  border-radius: 10px;
+  font-size: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
   background: #00eaff;
   color: black;
   cursor: pointer;
-  margin: 5px;
-}
-
-input {
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  margin: 10px;
 }
 
 /* efecte */
@@ -74,7 +93,7 @@ input {
 <div id="guess" class="screen">
   <div class="card">
     <h2>Guess Number (1-100)</h2>
-    <input id="gInput">
+    <input id="gInput" placeholder="Enter number...">
     <button onclick="checkGuess()">Try</button>
     <p id="gMsg"></p>
     <p id="gScore"></p>
@@ -87,8 +106,7 @@ input {
   <div class="card">
     <h2>🧙 Merlin</h2>
     <p id="mQuestion"></p>
-    <input id="mInput">
-    <br>
+    <input id="mInput" placeholder="Type answer...">
     <button onclick="checkMerlin()">Check</button>
     <p id="mMsg"></p>
     <p id="mScore"></p>
@@ -104,7 +122,7 @@ function show(id){
   document.getElementById(id).classList.add("active");
 }
 
-/* GUESS GAME */
+/* ================= GUESS ================= */
 let number = Math.floor(Math.random()*100)+1;
 let gScore = 0;
 
@@ -127,7 +145,8 @@ function checkGuess(){
   document.getElementById("gScore").innerText="Score: "+gScore;
 }
 
-/* MERLIN */
+/* ================= MERLIN ================= */
+
 let levels=[
  {q:"cat → ?",a:"tiger"},
  {q:"water → ?",a:"ice"},
