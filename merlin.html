@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>World Bridge Merlin</title>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+<style>
+body {margin:0;background:black;}
+#inputBox {position:absolute;bottom:20px;left:20px;padding:10px;}
+</style>
+</head>
+<body>
+
+<input id="inputBox" placeholder="Cuvânt..." />
+
+<script>
+let levels = [
+{era:"Ancient",start:"fire",goal:"magic",path:["smoke","ritual"]},
+{era:"Medieval",start:"magic",goal:"machine",path:["alchemy","science"]},
+{era:"Modern",start:"machine",goal:"AI",path:["computer","internet"]}
+];
+
+let currentLevel = 0;
+
+class GameScene extends Phaser.Scene{
+create(){
+this.level = levels[currentLevel];
+
+this.add.text(20,20,"Era: "+this.level.era,{fontSize:"24px",fill:"#fff"});
+this.merlin = this.add.text(20,60,"🧙 Merlin: Think evolution",{fontSize:"18px",fill:"#a78bfa"});
+this.pathText = this.add.text(20,120,this.level.start,{fontSize:"28px",fill:"#fff"});
+
+this.currentPath=[this.level.start];
+
+let input=document.getElementById("inputBox");
+input.onkeydown=(e)=>{
+if(e.key==="Enter"){
+this.check(input.value.toLowerCase());
+input.value="";
+}
+};
+}
+
+check(word){
+let expected=this.level.path[this.currentPath.length-1];
+
+if(word===expected){
+this.currentPath.push(word);
+this.pathText.setText(this.currentPath.join(" → "));
+if(this.currentPath.length-1===this.level.path.length){
+alert("Level complete!");
+currentLevel++;
+location.reload();
+}
+}else{
+this.merlin.setText("🧙 Wrong path...");
+}
+}
+}
+
+new Phaser.Game({type:Phaser.AUTO,width:800,height:600,scene:[GameScene]});
+</script>
+
+</body>
+</html>
