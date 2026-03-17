@@ -40,8 +40,8 @@ input {
 }
 
 button {
-    margin-top: 15px;
-    padding: 10px 20px;
+    margin: 5px;
+    padding: 10px 15px;
     border-radius: 10px;
     border: none;
     background: #00eaff;
@@ -66,14 +66,21 @@ button {
 
 <body>
 
+<!-- START -->
 <div id="startScreen" class="screen active">
     <h1>🌍 World Bridge Merlin</h1>
     <button onclick="startGame()">Start</button>
 </div>
 
+<!-- GAME -->
 <div id="gameScreen" class="screen">
 <div class="game">
     <h1>🧙 Merlin</h1>
+
+    <!-- LIMBA -->
+    <button onclick="setLang('ro')">RO</button>
+    <button onclick="setLang('en')">EN</button>
+
     <div id="era"></div>
     <div id="merlin"></div>
     <div id="path"></div>
@@ -89,13 +96,32 @@ button {
 </div>
 </div>
 
+<!-- WIN -->
 <div id="winScreen" class="screen">
-    <h1>🏆 AI CÂȘTIGAT!</h1>
+    <h1 id="winText"></h1>
     <ul id="leaderboard"></ul>
     <button onclick="restartGame()">Restart</button>
 </div>
 
 <script>
+
+let lang = "ro";
+
+const text = {
+    ro: {
+        win: "🏆 AI CÂȘTIGAT!",
+        wrong: "❌ Greșit!",
+        score: "Scor",
+        progress: "Progres"
+    },
+    en: {
+        win: "🏆 YOU WON!",
+        wrong: "❌ Wrong!",
+        score: "Score",
+        progress: "Progress"
+    }
+};
+
 const inputBox = document.getElementById("inputBox");
 const gameBox = document.querySelector(".game");
 
@@ -103,15 +129,20 @@ const successSound = new Audio("https://www.soundjay.com/buttons/sounds/button-3
 const failSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
 
 let levels = [
-    { era:"Ancient", words:["fire","stone","wheel"], hint:"🔥 Începutul..." },
-    { era:"Medieval", words:["magic","alchemy","castle"], hint:"🧪 Evoluție..." },
-    { era:"Modern", words:["machine","computer","ai"], hint:"💻 Aproape..." },
-    { era:"Future", words:["quantum","cyber","singularity"], hint:"🚀 Viitor..." }
+    { era:"Ancient", words:["fire","stone","wheel"], hint:"🔥 Start of civilization..." },
+    { era:"Medieval", words:["magic","alchemy","castle"], hint:"🧪 From magic to science..." },
+    { era:"Modern", words:["machine","computer","ai"], hint:"💻 Getting closer..." },
+    { era:"Future", words:["quantum","cyber","singularity"], hint:"🚀 The future..." }
 ];
 
 let currentLevel = 0;
 let step = 0;
 let score = 0;
+
+function setLang(l){
+    lang = l;
+    updateUI();
+}
 
 function startGame(){
     document.getElementById("startScreen").classList.remove("active");
@@ -122,8 +153,12 @@ function startGame(){
 function updateUI(){
     document.getElementById("era").innerText = "Era: " + levels[currentLevel].era;
     document.getElementById("merlin").innerText = "🧙 " + levels[currentLevel].hint;
-    document.getElementById("path").innerText = "Progress: " + step + "/" + levels[currentLevel].words.length;
-    document.getElementById("score").innerText = "Score: " + score;
+
+    document.getElementById("path").innerText =
+        text[lang].progress + ": " + step + "/" + levels[currentLevel].words.length;
+
+    document.getElementById("score").innerText =
+        text[lang].score + ": " + score;
 
     let percent = (step / levels[currentLevel].words.length) * 100;
     document.getElementById("progressFill").style.width = percent + "%";
@@ -171,6 +206,7 @@ inputBox.addEventListener("keydown", function(e){
                     saveScore();
                     document.getElementById("gameScreen").classList.remove("active");
                     document.getElementById("winScreen").classList.add("active");
+                    document.getElementById("winText").innerText = text[lang].win;
                     showLeaderboard();
                     return;
                 }
@@ -183,7 +219,7 @@ inputBox.addEventListener("keydown", function(e){
             setTimeout(()=>gameBox.classList.remove("wrong"),300);
 
             document.getElementById("merlin").innerText =
-                "❌ Greșit! " + levels[currentLevel].hint;
+                text[lang].wrong + " " + levels[currentLevel].hint;
         }
 
         updateUI();
@@ -194,6 +230,7 @@ inputBox.addEventListener("keydown", function(e){
 function restartGame(){
     location.reload();
 }
+
 </script>
 
 </body>
