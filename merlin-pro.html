@@ -74,3 +74,25 @@ button {
 
     <input id="inputBox" placeholder="Scrie cuvânt..." />
     <br>
+<script>
+const inputBox = document.getElementById("inputBox");
+
+const successSound = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+const failSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
+inputBox.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        let value = inputBox.value.toLowerCase();
+
+        if(value === "fire"){
+            successSound.play();
+            document.getElementById("merlin").innerText = "🔥 Corect! Ai descoperit focul!";
+        } else {
+            failSound.play();
+            document.getElementById("merlin").innerText = "❌ Greșit... Mai încearcă!";
+        }
+
+        inputBox.value = "";
+    }
+});
+</script>
