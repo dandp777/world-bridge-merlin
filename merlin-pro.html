@@ -38,3 +38,137 @@ body {
     from { box-shadow: 0 0 0px green; }
     to { box-shadow: 0 0 20px green; }
 }
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+input {
+    padding: 10px;
+    width: 80%;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #00eaff;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+    <h1>🧙 Merlin</h1>
+    <div id="era"></div>
+    <div id="merlin"></div>
+    <div id="path"></div>
+    <div id="score">Score: 0</div>
+
+    <input id="inputBox" placeholder="Scrie cuvânt..." />
+    <br>
+    <button onclick="restartGame()">Restart</button>
+</div>
+
+<script>
+const inputBox = document.getElementById("inputBox");
+
+const successSound = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+const failSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
+let levels = [
+    { era: "Ancient", words: ["fire","smoke","magic"], hint: "🔥 Gândește evoluția..." },
+    { era: "Medieval", words: ["magic","alchemy","machine"], hint: "⚔️ Din magie spre știință..." },
+    { era: "Modern", words: ["machine","computer","ai"], hint: "💻 Te apropii de viitor..." }
+];
+
+let currentLevel = 0;
+let step = 0;
+let score = 0;
+
+// Load progres
+if(localStorage.getItem("merlinSave")){
+    let save = JSON.parse(localStorage.getItem("merlinSave"));
+    currentLevel = save.level;
+    step = save.step;
+    score = save.score;
+}
+
+function updateUI(){
+    document.getElementById("era").innerText = "Era: " + levels[currentLevel].era;
+    document.getElementById("merlin").innerText = "🧙 Merlin: " + levels[currentLevel].hint;
+    document.getElementById("path").innerText = "Progress: " + step + "/" + levels[currentLevel].words.length;
+    document.getElementById("score").innerText = "Score: " + score;
+}
+
+updateUI();
+
+inputBox.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        let value = inputBox.value.toLowerCase();
+        let correctWord = levels[currentLevel].words[step];
+
+        if(value === correctWord){
+            successSound.play();
+
+            score += 10;
+            step++;
+
+            document.querySelector(".game").classList.add("correct");
+            setTimeout(() => {
+                document.querySelector(".game").classList.remove("correct");
+            }, 500);
+
+            if(step >= levels[currentLevel].words.length){
+                currentLevel++;
+                step = 0;
+
+                if(currentLevel >= levels.length){
+                    document.getElementById("merlin").innerText = "🏆 Ai ajuns la AI!";
+                    inputBox.disabled = true;
+                    localStorage.removeItem("merlinSave");
+                    return;
+                }
+            }
+
+        } else {
+            failSound.play();
+
+            document.querySelector(".game").classList.add("wrong");
+            setTimeout(() => {
+                document.querySelector(".game").classList.remove("wrong");
+            }, 300);
+
+            document.getElementById("merlin").innerText =
+                "❌ Greșit... " + levels[currentLevel].hint;
+        }
+
+        localStorage.setItem("merlinSave", JSON.stringify({
+            level: currentLevel,
+            step: step,
+            score: score
+        }));
+
+        updateUI();
+        inputBox.value = "";
+    }
+});
+
+function restartGame(){
+    localStorage.removeItem("merlinSave");
+    location.reload();
+}
+</script>
+
+</body>
+</html>
