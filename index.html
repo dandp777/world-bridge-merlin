@@ -2,11 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
-<!-- IMPORTANT PENTRU TELEFON -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Game Hub PRO</title>
+<title>Game Hub</title>
 
 <style>
 body {
@@ -18,31 +16,35 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 10px;
 }
 
 /* screens */
 .screen { display: none; }
 .active { display: block; }
 
-/* card */
+/* card modern */
 .card {
-  background: rgba(255,255,255,0.05);
-  padding: 20px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  padding: 30px;
   border-radius: 20px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  width: 100%;
+  width: 90%;
   max-width: 400px;
-  transition: 0.3s;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
 }
 
-/* text */
-h1 { font-size: 22px; }
-h2 { font-size: 20px; }
-p { font-size: 16px; }
+/* titluri */
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
 
-/* input + buttons */
+h2 {
+  font-size: 20px;
+}
+
+/* input */
 input {
   width: 100%;
   padding: 14px;
@@ -52,6 +54,7 @@ input {
   font-size: 16px;
 }
 
+/* butoane */
 button {
   width: 100%;
   padding: 14px;
@@ -59,9 +62,15 @@ button {
   border-radius: 12px;
   border: none;
   font-size: 16px;
-  background: #00eaff;
+  background: linear-gradient(45deg,#00eaff,#00bfff);
   color: black;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00eaff;
 }
 
 /* efecte */
@@ -92,12 +101,12 @@ button {
 <!-- GUESS -->
 <div id="guess" class="screen">
   <div class="card">
-    <h2>Guess Number (1-100)</h2>
-    <input id="gInput" placeholder="Enter number...">
+    <h2>Guess Number</h2>
+    <input id="gInput" placeholder="1-100">
     <button onclick="checkGuess()">Try</button>
     <p id="gMsg"></p>
     <p id="gScore"></p>
-    <button onclick="show('menu')">⬅ Back</button>
+    <button onclick="show('menu')">Back</button>
   </div>
 </div>
 
@@ -106,11 +115,11 @@ button {
   <div class="card">
     <h2>🧙 Merlin</h2>
     <p id="mQuestion"></p>
-    <input id="mInput" placeholder="Type answer...">
+    <input id="mInput" placeholder="Answer...">
     <button onclick="checkMerlin()">Check</button>
     <p id="mMsg"></p>
     <p id="mScore"></p>
-    <button onclick="show('menu')">⬅ Back</button>
+    <button onclick="show('menu')">Back</button>
   </div>
 </div>
 
@@ -122,7 +131,7 @@ function show(id){
   document.getElementById(id).classList.add("active");
 }
 
-/* ================= GUESS ================= */
+/* GUESS */
 let number = Math.floor(Math.random()*100)+1;
 let gScore = 0;
 
@@ -145,14 +154,11 @@ function checkGuess(){
   document.getElementById("gScore").innerText="Score: "+gScore;
 }
 
-/* ================= MERLIN ================= */
-
+/* MERLIN */
 let levels=[
  {q:"cat → ?",a:"tiger"},
  {q:"water → ?",a:"ice"},
- {q:"man → ?",a:"king"},
- {q:"fire → ?",a:"smoke"},
- {q:"seed → ?",a:"tree"}
+ {q:"man → ?",a:"king"}
 ];
 
 let level=0;
