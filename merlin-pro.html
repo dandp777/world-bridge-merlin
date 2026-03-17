@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>World Bridge Merlin</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.game {
+    background: rgba(255,255,255,0.05);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    width: 350px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+#era {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#merlin {
+    color: #00eaff;
+    margin-bottom: 20px;
+}
+
+#path {
+    font-size: 22px;
+    margin: 20px 0;
+}
+
+input {
+    padding: 10px;
+    width: 80%;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: #00eaff;
+    color: black;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+    <h1>🧙 Merlin</h1>
+    <div id="era"></div>
+    <div id="merlin"></div>
+    <div id="path"></div>
+
+    <input id="inputBox" placeholder="Scrie cuvânt..." />
+    <br>
