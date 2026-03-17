@@ -16,38 +16,183 @@ body {
     height: 100vh;
 }
 
-.container {
+.screen { display: none; text-align: center; }
+.active { display: block; }
+
+.game {
+    background: rgba(255,255,255,0.08);
+    padding: 40px;
+    border-radius: 20px;
+    width: 350px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+}
+
+.correct { box-shadow: 0 0 40px lime; }
+.wrong { box-shadow: 0 0 40px red; }
+
+input {
+    margin-top: 15px;
+    padding: 10px;
+    width: 80%;
+    border-radius: 10px;
+    border: none;
     text-align: center;
 }
 
-h1 {
-    font-size: 40px;
-}
-
 button {
-    padding: 15px 30px;
-    font-size: 18px;
+    margin-top: 15px;
+    padding: 10px 20px;
+    border-radius: 10px;
     border: none;
-    border-radius: 15px;
     background: #00eaff;
     cursor: pointer;
-    margin-top: 20px;
+}
+
+.progress-bar {
+    height: 10px;
+    background: #222;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #00eaff;
+    border-radius: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div id="startScreen" class="screen active">
     <h1>🌍 World Bridge Merlin</h1>
-    <p>Descoperă evoluția omenirii cu Merlin 🧙</p>
+    <button onclick="startGame()">Start</button>
+</div>
 
-    <button onclick="startGame()">Start Game</button>
+<div id="gameScreen" class="screen">
+<div class="game">
+    <h1>🧙 Merlin</h1>
+    <div id="era"></div>
+    <div id="merlin"></div>
+    <div id="path"></div>
+    <div id="score"></div>
+
+    <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+    </div>
+
+    <input id="inputBox" placeholder="Scrie cuvânt..." />
+    <br>
+    <button onclick="restartGame()">Restart</button>
+</div>
+</div>
+
+<div id="winScreen" class="screen">
+    <h1>🏆 AI CÂȘTIGAT!</h1>
+    <ul id="leaderboard"></ul>
+    <button onclick="restartGame()">Restart</button>
 </div>
 
 <script>
+const inputBox = document.getElementById("inputBox");
+const gameBox = document.querySelector(".game");
+
+const successSound = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+const failSound = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3");
+
+let levels = [
+    { era:"Ancient", words:["fire","stone","wheel"], hint:"🔥 Începutul..." },
+    { era:"Medieval", words:["magic","alchemy","castle"], hint:"🧪 Evoluție..." },
+    { era:"Modern", words:["machine","computer","ai"], hint:"💻 Aproape..." },
+    { era:"Future", words:["quantum","cyber","singularity"], hint:"🚀 Viitor..." }
+];
+
+let currentLevel = 0;
+let step = 0;
+let score = 0;
+
 function startGame(){
-    window.location.href = "merlin-pro.html";
+    document.getElementById("startScreen").classList.remove("active");
+    document.getElementById("gameScreen").classList.add("active");
+    updateUI();
+}
+
+function updateUI(){
+    document.getElementById("era").innerText = "Era: " + levels[currentLevel].era;
+    document.getElementById("merlin").innerText = "🧙 " + levels[currentLevel].hint;
+    document.getElementById("path").innerText = "Progress: " + step + "/" + levels[currentLevel].words.length;
+    document.getElementById("score").innerText = "Score: " + score;
+
+    let percent = (step / levels[currentLevel].words.length) * 100;
+    document.getElementById("progressFill").style.width = percent + "%";
+}
+
+function saveScore(){
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.push(score);
+    scores.sort((a,b)=>b-a);
+    scores = scores.slice(0,5);
+    localStorage.setItem("scores", JSON.stringify(scores));
+}
+
+function showLeaderboard(){
+    let scores = JSON.parse(localStorage.getItem("scores")) || [];
+    let list = document.getElementById("leaderboard");
+    list.innerHTML = "";
+    scores.forEach(s=>{
+        let li = document.createElement("li");
+        li.innerText = s + " pts";
+        list.appendChild(li);
+    });
+}
+
+inputBox.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+
+        let value = inputBox.value.toLowerCase();
+        let correctWord = levels[currentLevel].words[step];
+
+        if(value === correctWord){
+
+            successSound.play();
+            gameBox.classList.add("correct");
+            setTimeout(()=>gameBox.classList.remove("correct"),300);
+
+            step++;
+            score += 10;
+
+            if(step >= levels[currentLevel].words.length){
+                currentLevel++;
+                step = 0;
+
+                if(currentLevel >= levels.length){
+                    saveScore();
+                    document.getElementById("gameScreen").classList.remove("active");
+                    document.getElementById("winScreen").classList.add("active");
+                    showLeaderboard();
+                    return;
+                }
+            }
+
+        } else {
+
+            failSound.play();
+            gameBox.classList.add("wrong");
+            setTimeout(()=>gameBox.classList.remove("wrong"),300);
+
+            document.getElementById("merlin").innerText =
+                "❌ Greșit! " + levels[currentLevel].hint;
+        }
+
+        updateUI();
+        inputBox.value = "";
+    }
+});
+
+function restartGame(){
+    location.reload();
 }
 </script>
 
