@@ -6,54 +6,54 @@
 
 <style>
 body {
-    margin: 0;
-    font-family: Arial;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  margin:0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
 .game {
-    background: rgba(255,255,255,0.08);
-    padding: 40px;
-    border-radius: 20px;
-    text-align: center;
-    width: 340px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.05);
+  padding:40px;
+  border-radius:20px;
+  text-align:center;
+  width:320px;
 }
 
 button {
-    margin: 5px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 10px;
-    background: #00eaff;
-    cursor: pointer;
+  padding:10px 15px;
+  margin:5px;
+  border:none;
+  border-radius:10px;
+  background:#00eaff;
+  cursor:pointer;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    margin-top: 15px;
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:none;
 }
 
 .progress {
-    height: 10px;
-    background: #333;
-    border-radius: 10px;
-    margin: 10px 0;
-    overflow: hidden;
+  width:100%;
+  height:10px;
+  background:#333;
+  border-radius:10px;
+  margin:15px 0;
 }
 
 .bar {
-    height: 100%;
-    background: #00eaff;
-    width: 0%;
+  height:100%;
+  width:0%;
+  background:#00eaff;
+  border-radius:10px;
 }
 </style>
 </head>
@@ -61,25 +61,23 @@ input {
 <body>
 
 <div class="game">
-    <h1>🧙 Merlin</h1>
+<h1>🧙 Merlin</h1>
 
-    <button onclick="setLang('ro')">RO</button>
-    <button onclick="setLang('en')">EN</button>
+<button onclick="setLang('ro')">RO</button>
+<button onclick="setLang('en')">EN</button>
 
-    <div id="era"></div>
-    <div id="merlin"></div>
+<div id="era"></div>
+<div id="merlin"></div>
 
-    <div class="progress">
-        <div class="bar" id="bar"></div>
-    </div>
+<div class="progress">
+  <div class="bar" id="bar"></div>
+</div>
 
-    <div id="path"></div>
-    <div id="score"></div>
+<div id="path"></div>
+<div id="score"></div>
 
-    <input id="inputBox" placeholder="Scrie..." />
-
-    <br>
-    <button onclick="restartGame()">Restart</button>
+<input id="inputBox" placeholder="Scrie..." />
+<button onclick="restartGame()">Restart</button>
 </div>
 
 <script>
@@ -88,33 +86,25 @@ const inputBox = document.getElementById("inputBox");
 let lang = "ro";
 
 const texts = {
-    ro: {
-guess: "🔮 Ghici evoluția...",
-        placeholder: "Scrie cuvânt...",
-        correct: "🔥 Corect!",
-        wrong: "❌ Greșit!"
-    },
-    en: {
+  ro: {
+    guess: "🔮 Ghici evoluția...",
+    placeholder: "Scrie cuvânt...",
+    correct: "🔥 Corect!",
+    wrong: "❌ Greșit!"
+  },
+  en: {
     guess: "🔮 Guess the evolution...",
-        placeholder: "Type word...",
-        correct: "🔥 Correct!",
-        wrong: "❌ Wrong!"
-    }
+    placeholder: "Type word...",
+    correct: "🔥 Correct!",
+    wrong: "❌ Wrong!"
+  }
 };
 
 let levels = [
-    {
-        era: "Ancient",
-        words: ["fire", "smoke", "magic"]
-    },
-    {
-        era: "Medieval",
-        words: ["magic", "alchemy", "machine"]
-    },
-    {
-        era: "Modern",
-        words: ["machine", "computer", "ai"]
-    }
+  { era:"Ancient", words:["fire","smoke","magic"] },
+  { era:"Medieval", words:["magic","alchemy","machine"] },
+  { era:"Modern", words:["machine","computer","ai"] },
+  { era:"Future", words:["ai","quantum","singularity"] }
 ];
 
 let currentLevel = 0;
@@ -122,80 +112,63 @@ let step = 0;
 let score = 0;
 
 function updateUI(){
-    document.getElementById("era").innerText =
-        "Era: " + levels[currentLevel].era;
+  document.getElementById("era").innerText =
+    "Era: " + levels[currentLevel].era;
 
-    document.getElementById("merlin").innerText =
-        texts[lang].guess;
+  document.getElementById("merlin").innerText =
+    texts[lang].guess;
 
-    document.getElementById("path").innerText =
-        "Progress: " + step + "/" + levels[currentLevel].words.length;
+  document.getElementById("path").innerText =
+    "Progress: " + step + "/" + levels[currentLevel].words.length;
 
-    document.getElementById("score").innerText =
-        "Score: " + score;
+  document.getElementById("score").innerText =
+    "Score: " + score;
 
-    document.getElementById("bar").style.width =
-        (step / levels[currentLevel].words.length * 100) + "%";
+  inputBox.placeholder = texts[lang].placeholder;
 
-    inputBox.placeholder = texts[lang].placeholder;
+  let percent = (step / levels[currentLevel].words.length) * 100;
+  document.getElementById("bar").style.width = percent + "%";
 }
 
 function setLang(l){
-    lang = l;
-    updateUI();
+  lang = l;
+  updateUI();
 }
 
 updateUI();
 
 inputBox.addEventListener("keydown", function(e){
-    if(e.key === "Enter"){
-        let value = inputBox.value.toLowerCase();
-        let correct = levels[currentLevel].words[step];
+  if(e.key === "Enter"){
+    let value = inputBox.value.toLowerCase();
+    let correctWord = levels[currentLevel].words[step];
 
-        if(value === correct){
-            score += 10;
-            step++;
+    if(value === correctWord){
+      score++;
+      step++;
 
-            if(step >= levels[currentLevel].words.length){
-                currentLevel++;
-                step = 0;
+      if(step >= levels[currentLevel].words.length){
+        currentLevel++;
+        step = 0;
 
-                if(currentLevel >= levels.length){
-                    document.getElementById("merlin").innerText =
-                        "🚀 Ai ajuns în viitor!";
-                    inputBox.disabled = true;
-                    return;
-                }
-            }
-
-        } else {
-            document.getElementById("merlin").innerText =
-                texts[lang].wrong;
+        if(currentLevel >= levels.length){
+          document.getElementById("merlin").innerText = "🏆 AI câștigat!";
+          inputBox.disabled = true;
+          return;
         }
-
-        localStorage.setItem("merlinSave", JSON.stringify({
-            level: currentLevel,
-            step: step,
-            score: score
-        }));
-
-        updateUI();
-        inputBox.value = "";
+      }
     }
+
+    inputBox.value = "";
+    updateUI();
+  }
 });
 
 function restartGame(){
-    localStorage.removeItem("merlinSave");
-    location.reload();
-}
-
-// LOAD SAVE
-let save = JSON.parse(localStorage.getItem("merlinSave"));
-if(save){
-    currentLevel = save.level;
-    step = save.step;
-    score = save.score;
-    updateUI();
+  currentLevel = 0;
+  step = 0;
+  score = 0;
+  inputBox.disabled = false;
+  updateUI();
 }
 </script>
 
