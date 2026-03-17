@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Merlin PRO</title>
+<title>Merlin</title>
 
 <style>
 body {
@@ -17,28 +17,27 @@ body {
 }
 
 .game {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
   padding: 30px;
   border-radius: 20px;
   text-align: center;
-  width: 320px;
-}
-
-button {
-  margin: 5px;
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  background: #00eaff;
-  cursor: pointer;
+  width: 300px;
 }
 
 input {
   width: 100%;
   padding: 10px;
+  margin-top: 10px;
   border-radius: 10px;
   border: none;
+}
+
+button {
   margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #00eaff;
 }
 
 .progress {
@@ -52,12 +51,6 @@ input {
   height: 100%;
   background: #00eaff;
   width: 0%;
-  border-radius: 10px;
-}
-
-.msg {
-  margin-top: 10px;
-  font-weight: bold;
 }
 </style>
 </head>
@@ -67,117 +60,78 @@ input {
 <div class="game">
   <h2>Merlin</h2>
 
-  <button onclick="setLang('ro')">RO</button>
-  <button onclick="setLang('en')">EN</button>
-
-  <div id="era"></div>
-  <div id="hint"></div>
+  <div id="level"></div>
+  <div id="progressText"></div>
 
   <div class="progress">
     <div class="bar" id="bar"></div>
   </div>
 
-  <div id="progress"></div>
-  <div id="score"></div>
+  <input id="inputBox" placeholder="scrie cuvânt" onkeydown="check(event)">
+  <button onclick="restart()">Restart</button>
 
-  <input id="inputBox" />
-  <button onclick="restartGame()">Restart</button>
-
-  <div class="msg" id="msg"></div>
+  <div id="msg"></div>
 </div>
 
 <script>
-const input = document.getElementById("inputBox");
-
-let lang = "ro";
-
-const texts = {
-  ro: {
-    hint: "Ghici evoluția...",
-    placeholder: "Scrie cuvânt...",
-    correct: "Corect!",
-    wrong: "Greșit!",
-    progress: "Progres"
-  },
-  en: {
-    hint: "Guess the evolution...",
-    placeholder: "Type word...",
-    correct: "Correct!",
-    wrong: "Wrong!",
-    progress: "Progress"
-  }
-};
-
-const levels = [
-  { era: "Ancient", words: ["fire", "wheel", "metal"] },
-  { era: "Medieval", words: ["castle", "sword", "king"] },
-  { era: "Modern", words: ["engine", "electricity", "factory"] }
-];
-
 let level = 0;
 let step = 0;
 let score = 0;
 
+const levels = [
+  ["fire", "wheel", "metal"],
+  ["castle", "sword", "king"],
+  ["engine", "electricity", "factory"]
+];
+
 function update() {
-  document.getElementById("era").innerText =
-    "Era: " + levels[level].era;
+  document.getElementById("level").innerText =
+    "Level: " + (level + 1);
 
-  document.getElementById("hint").innerText =
-    texts[lang].hint;
+  document.getElementById("progressText").innerText =
+    "Word " + (step + 1) + "/" + levels[level].length;
 
-  document.getElementById("progress").innerText =
-    texts[lang].progress + ": " + step + "/" + levels[level].words.length;
-
-  document.getElementById("score").innerText =
-    "Score: " + score;
-
-  input.placeholder = texts[lang].placeholder;
-
-  let percent = (step / levels[level].words.length) * 100;
+  let percent = (step / levels[level].length) * 100;
   document.getElementById("bar").style.width = percent + "%";
 }
 
-function setLang(l) {
-  lang = l;
-  update();
-}
-
-input.addEventListener("keydown", function(e) {
+function check(e) {
   if (e.key === "Enter") {
 
+    let input = document.getElementById("inputBox");
     let val = input.value.trim().toLowerCase();
-    let correct = levels[level].words[step];
 
-    if (val === correct) {
-      score++;
+    if (val === levels[level][step]) {
       step++;
+      score++;
 
-      document.getElementById("msg").innerText = texts[lang].correct;
+      document.getElementById("msg").innerText = "Corect!";
 
-      if (step === levels[level].words.length) {
+      if (step === levels[level].length) {
         level++;
         step = 0;
 
         if (level === levels.length) {
-          document.getElementById("msg").innerText = "GAME COMPLET!";
+          document.getElementById("msg").innerText = "AI TERMINAT JOCUL!";
           input.disabled = true;
           return;
         }
       }
+
     } else {
-      document.getElementById("msg").innerText = texts[lang].wrong;
+      document.getElementById("msg").innerText = "Greșit!";
     }
 
     input.value = "";
     update();
   }
-});
+}
 
-function restartGame() {
+function restart() {
   level = 0;
   step = 0;
   score = 0;
-  input.disabled = false;
+  document.getElementById("inputBox").disabled = false;
   document.getElementById("msg").innerText = "";
   update();
 }
