@@ -1,22 +1,133 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gaming Hub</title>
+<title>Game Hub</title>
+
 <style>
-body {background:#0f172a;color:white;font-family:Arial;text-align:center;}
-.card {background:#1e293b;padding:20px;margin:50px auto;width:300px;border-radius:15px;}
-a {color:#38bdf8;text-decoration:none;font-size:20px;}
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* screens */
+.screen {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  width: 320px;
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px;
+  background: #00eaff;
+  cursor: pointer;
+  margin: 5px;
+}
+
+input {
+  padding: 10px;
+  width: 180px;
+  border-radius: 10px;
+  border: none;
+}
 </style>
 </head>
-<body>
-<h1>🎮 Gaming Hub</h1>
 
-<div class="card">
-<h2>World Bridge Merlin</h2>
-<p>Journey from past to future</p>
-<a href="merlin.html">▶ Play</a>
+<body>
+
+<!-- MENU -->
+<div id="menu" class="screen active">
+  <div class="card">
+    <h2>🎮 Game Hub</h2>
+    <button onclick="show('guess')">Guess Number</button>
+    <button onclick="show('merlin')">Merlin</button>
+  </div>
 </div>
+
+<!-- GUESS GAME -->
+<div id="guess" class="screen">
+  <div class="card">
+    <h2>🔢 Guess Number</h2>
+    <input id="gInput" placeholder="1-100">
+    <br>
+    <button onclick="checkGuess()">Try</button>
+    <p id="gMsg"></p>
+    <button onclick="back()">⬅ Back</button>
+  </div>
+</div>
+
+<!-- MERLIN GAME -->
+<div id="merlin" class="screen">
+  <div class="card">
+    <h2>🧙 Merlin</h2>
+    <p id="mWord">cat → ?</p>
+    <input id="mInput" placeholder="Guess evolution">
+    <br>
+    <button onclick="checkMerlin()">Check</button>
+    <p id="mMsg"></p>
+    <button onclick="back()">⬅ Back</button>
+  </div>
+</div>
+
+<script>
+/* navigation */
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function back() {
+  show("menu");
+}
+
+/* GUESS GAME */
+let number = Math.floor(Math.random() * 100) + 1;
+
+function checkGuess() {
+  let val = Number(document.getElementById("gInput").value);
+  let msg = document.getElementById("gMsg");
+
+  if (val === number) {
+    msg.innerText = "🔥 Correct!";
+  } else if (val < number) {
+    msg.innerText = "⬆ Too small";
+  } else {
+    msg.innerText = "⬇ Too big";
+  }
+}
+
+/* MERLIN SIMPLE */
+let correctWord = "lion";
+
+function checkMerlin() {
+  let val = document.getElementById("mInput").value.toLowerCase();
+  let msg = document.getElementById("mMsg");
+
+  if (val === correctWord) {
+    msg.innerText = "🔥 Corect!";
+  } else {
+    msg.innerText = "❌ Greșit!";
+  }
+}
+</script>
 
 </body>
 </html>
